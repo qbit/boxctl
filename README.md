@@ -94,6 +94,7 @@ The options are as follows:
 chmod(1),
 diff(1),
 fw\_update(1),
+ksh(1),
 pkg\_add(1),
 pkg\_delete(1),
 pkg\_info(1),

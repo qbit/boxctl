@@ -170,8 +170,8 @@ EOF
 		msg 2 "\t\tchmod ${_mode} $_dest"
 
 		_scp $_src "${RUN_USER}@${SERVER}:$_dest"
-		_ssh ${RUN_USER}@${SERVER} "/sbin/chown ${_owner}:${_group} $_dest; \
-			/bin/chmod ${_mode} $_dest"
+		_ssh ${RUN_USER}@${SERVER} "/sbin/chown ${_owner}:${_group} \
+			$_dest; /bin/chmod ${_mode} $_dest"
 	done
 fi
 

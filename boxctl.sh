@@ -71,7 +71,7 @@ msg() {
 	_level=$1
 	_msg=$2
 	if [ $VERBOSITY -ge $_level ] && [ $DRY == 0 ]; then
-		echo "==> $_msg"
+		echo "==> ${SERVER} -> $_msg"
 	fi
 }
 
@@ -159,7 +159,7 @@ _ssh() {
 V=$(expand_v)
 
 if [ -f ./files ]; then
-	msg 0 "Installing files"
+	msg 0 "Installing $(wc -l files | awk '{print $1 " " $2}')"
 	for file in $(cat files); do
 		local _src _dest _mode _owner _group
 		read _src _owner _group _mode _dest <<EOF
@@ -176,7 +176,7 @@ EOF
 fi
 
 if [ -f ./services ]; then
-	msg 0 "Enabling services"
+	msg 0 "Enabling services $(wc -l services | awk '{print $1 " " $2}')"
 	for service in $(cat services); do
 		msg 1 "\tenabling/restarting ${service}"
 		cmd="$(printf "$SERVICE_START_RESTART" \

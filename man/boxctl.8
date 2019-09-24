@@ -1,0 +1,110 @@
+.\"	$OpenBSD$
+.\"
+.\" Copyright (c) 2019 Aaron Bieber <aaron@bolddaemon.com>
+.\"
+.\" Permission to use, copy, modify, and distribute this software for any
+.\" purpose with or without fee is hereby granted, provided that the above
+.\" copyright notice and this permission notice appear in all copies.
+.\"
+.\" THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+.\" WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+.\" MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+.\" ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+.\" WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+.\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+.\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+.\"
+.Dd $Mdocdate: September 23 2019 $
+.Dt BOXCTL 8
+.Os
+.Sh NAME
+.Nm boxctl
+.Nd tool to manage remote
+.Ox
+machines
+.Sh SYNOPSIS
+.Nm boxctl
+.Op Fl mnv
+.Op Fl h Ar host
+.Op Fl u Ar user
+.Sh DESCRIPTION
+.Nm
+is a
+.Xr ksh 1
+script designed to help manage
+.Ox
+machines.
+It uses only tools contained in
+.Ox
+base.
+.Pp
+The options are as follows:
+.Bl -tag -width Ds
+.It Fl h Ar host
+Remote host to be managed.
+.It Fl u Ar user
+User to connect to
+.Pa host
+with.
+Defaults to
+.Pa root .
+.It Fl m
+Run maintenance tasks.
+This includes deleting unused dependencies using
+.Xr pkg_delete 1 .
+And installing / updating firmware using
+.Xr fw_update 1 .
+.It Fl n
+Dry run.
+This will only print the commands that will be run.
+.It Fl v
+Increase verbosity.
+More v's can be specified to increase information output.
+The number of v's are passed to tools used by
+.Nm .
+.El
+.Sh FILES
+.Bl -tag -width $CWD/packages
+.It Pa $CWD/files
+Is a ":" delimited index of source file, owner, group, mode and destination.
+Each source will be copied to the specified destination, then chown/chmod will
+be run with the values specified.
+If this file does not exist, no files are copied.
+.It Pa $CWD/services
+An optional file that contains a list of services to enable on the remote
+host.
+If a service is already enabled, it will be restarted each run of
+.Nm .
+.It Pa $CWD/packages
+When this file exists,
+.Nm
+will install the packages contained therewithin on the remote host.
+A list is cached on the remote host under /etc/packages.
+This list (if it exists) will be compared using
+.Xr diff 1
+and only missing packages will be installed.
+Package names should be listed by their fuzzy names.
+See
+.Xr pkg_info 1
+for more information on fuzzy names.
+.El
+.Sh SEE ALSO
+.Xr chmod 1 ,
+.Xr diff 1 ,
+.Xr fw_update 1 ,
+.Xr pkg_add 1 ,
+.Xr pkg_delete 1 ,
+.Xr pkg_info 1 ,
+.Xr scp 1 ,
+.Xr ssh 1 ,
+.Xr chown 8 ,
+.Xr rcctl 8
+.Sh HISTORY
+The first version of
+.Nm
+was released in September of 2019.
+.Sh AUTHORS
+.An -nosplit
+.Nm
+was written by
+.An Aaron Bieber Aq Mt aaron@bolddaemon.com .

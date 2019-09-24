@@ -159,7 +159,7 @@ _ssh() {
 V=$(expand_v)
 
 if [ -f ./files ]; then
-	msg 0 "Installing $(wc -l files | awk '{print $1 " " $2}')"
+	msg 0 "installing $(wc -l files | awk '{print $1 " " $2}')"
 	for file in $(cat files); do
 		local _src _dest _mode _owner _group
 		read _src _owner _group _mode _dest <<EOF
@@ -176,7 +176,7 @@ EOF
 fi
 
 if [ -f ./services ]; then
-	msg 0 "Enabling services $(wc -l services | awk '{print $1 " " $2}')"
+	msg 0 "enabling services $(wc -l services | awk '{print $1 " " $2}')"
 	for service in $(cat services); do
 		msg 1 "\tenabling/restarting ${service}"
 		cmd="$(printf "$SERVICE_START_RESTART" \
@@ -186,15 +186,15 @@ if [ -f ./services ]; then
 fi
 
 if [ -f ./packages ]; then
-	msg 0 "Installing $(wc -l packages | awk '{print $1 " " $2}')"
+	msg 0 "installing $(wc -l packages | awk '{print $1 " " $2}')"
 	cmd=$(printf "${PKG_DIFF_INSTALL}" $V $V)
 	_scp packages "${RUN_USER}@${SERVER}:/etc/packages.tmp"
 	_ssh ${RUN_USER}@${SERVER} "${cmd}"
 fi
 
 if [ $MAINTENANCE == 1 ]; then
-	msg 0 "Cleaning up unused packages"
+	msg 0 "cleaning up unused packages"
 	_ssh ${RUN_USER}@${SERVER} "/usr/sbin/pkg_delete $V -a"
-	msg 0 "Installing firmware updates"
+	msg 0 "installing firmware updates"
 	_ssh ${RUN_USER}@${SERVER} "/usr/sbin/fw_update $V -a"
 fi

@@ -186,7 +186,7 @@ if [ -f ./services ]; then
 fi
 
 if [ -f ./packages ]; then
-	msg 0 "Installing $(wc -l packages | awk '{print $1 " " $2}') on ${SERVER}"
+	msg 0 "Installing $(wc -l packages | awk '{print $1 " " $2}')"
 	cmd=$(printf "${PKG_DIFF_INSTALL}" $V $V)
 	_scp packages "${RUN_USER}@${SERVER}:/etc/packages.tmp"
 	_ssh ${RUN_USER}@${SERVER} "${cmd}"

@@ -46,13 +46,13 @@ mv /etc/packages.tmp /etc/packages
 EOF
 )
 
-while getopts "h:u:nv" arg; do
+while getopts "h:mnu:v" arg; do
 	case $arg in
 		h)
 			SERVER=$OPTARG
 			;;
-		v)
-			VERBOSITY=$((VERBOSITY+1))
+		m)
+			MAINTENANCE=1
 			;;
 		n)
 			DRY=1
@@ -60,8 +60,8 @@ while getopts "h:u:nv" arg; do
 		u)
 			RUN_USER=$OPTARG
 			;;
-		m)
-			MAINTENANCE=1
+		v)
+			VERBOSITY=$((VERBOSITY+1))
 			;;
 	esac
 done

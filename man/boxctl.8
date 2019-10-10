@@ -24,7 +24,7 @@
 machines
 .Sh SYNOPSIS
 .Nm boxctl
-.Op Fl mnv
+.Op Fl fmnsv
 .Op Fl h Ar host
 .Op Fl u Ar user
 .Sh DESCRIPTION
@@ -48,6 +48,9 @@ User to connect to
 with.
 Defaults to
 .Pa root .
+.It Fl f
+Force installation of all packages.
+This skipps the 'intelligent' diff mode.
 .It Fl m
 Run maintenance tasks.
 This includes deleting unused dependencies using
@@ -57,6 +60,13 @@ And installing / updating firmware using
 .It Fl n
 Dry run.
 This will only print the commands that will be run.
+.It Fl s
+Force
+.Xr pkg_add 1
+to run with '-Dsnap'.
+This is useful when
+.Ox
+is in -beta.
 .It Fl v
 Increase verbosity.
 More v's can be specified to increase information output.

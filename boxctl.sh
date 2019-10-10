@@ -23,31 +23,16 @@ RUN_USER="root"
 VERBOSITY=0
 DRY=0
 MAINTENANCE=0
+SNAPSHOT=""
+FORCE=0
 SSH_CTL_PATH="/tmp/boxctl-%r@%h:%p"
 SSH_OPTS="-o ControlMaster=auto -o ControlPersist=60s -o ControlPath=${SSH_CTL_PATH}"
-SERVICE_START_RESTART=$(cat <<EOF
-/usr/sbin/rcctl enable %s; \
-/usr/sbin/rcctl check %s && \
-	/usr/sbin/rcctl restart %s || \
-	/usr/sbin/rcctl start %s
-EOF
-)
 
-PKG_DIFF_INSTALL=$(cat <<EOF
-if [ -f /etc/packages ]; then
-	# Already ran a full install, so only install new packages
-	diff -u /etc/packages /etc/packages.tmp | grep -e ^+[a-z0-9] | \
-		sed 's/^+//' > /tmp/new_packages
-	/usr/sbin/pkg_add %s -z -l /tmp/new_packages
-else
-	/usr/sbin/pkg_add %s -z -l /etc/packages.tmp
-fi
-mv /etc/packages.tmp /etc/packages
-EOF
-)
-
-while getopts "h:mnu:v" arg; do
+while getopts "fh:mnu:sv" arg; do
 	case $arg in
+		f)
+			FORCE=1
+			;;
 		h)
 			SERVER=$OPTARG
 			;;
@@ -60,11 +45,35 @@ while getopts "h:mnu:v" arg; do
 		u)
 			RUN_USER=$OPTARG
 			;;
+		s)
+			SNAPSHOT="-Dsnap"
+			;;
 		v)
 			VERBOSITY=$((VERBOSITY+1))
 			;;
 	esac
 done
+
+PKG_DIFF_INSTALL=$(cat <<EOF
+if [ -f /etc/packages ] && [ "${FORCE}" == "0" ]; then
+	# Already ran a full install, so only install new packages
+	diff -u /etc/packages /etc/packages.tmp | grep -e ^+[a-z0-9] | \
+		sed 's/^+//' > /tmp/new_packages
+	/usr/sbin/pkg_add %s ${SNAPSHOT} -z -l /tmp/new_packages
+else
+	/usr/sbin/pkg_add %s ${SNAPSHOT} -z -l /etc/packages.tmp
+fi
+mv /etc/packages.tmp /etc/packages
+EOF
+)
+
+SERVICE_START_RESTART=$(cat <<EOF
+/usr/sbin/rcctl enable %s; \
+/usr/sbin/rcctl check %s && \
+	/usr/sbin/rcctl restart %s || \
+	/usr/sbin/rcctl start %s
+EOF
+)
 
 msg() {
 	local _level _msg

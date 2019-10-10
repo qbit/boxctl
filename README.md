@@ -9,7 +9,7 @@ machines
 # SYNOPSIS
 
 **boxctl**
-\[**-mnv**]
+\[**-fmnsv**]
 \[**-h**&nbsp;*host*]
 \[**-u**&nbsp;*user*]
 
@@ -39,6 +39,11 @@ The options are as follows:
 > Defaults to
 > *root*.
 
+**-f**
+
+> Force installation of all packages.
+> This skipps the 'intelligent' diff mode.
+
 **-m**
 
 > Run maintenance tasks.
@@ -51,6 +56,15 @@ The options are as follows:
 
 > Dry run.
 > This will only print the commands that will be run.
+
+**-s**
+
+> Force
+> pkg\_add(1)
+> to run with '-Dsnap'.
+> This is useful when
+> OpenBSD
+> is in -beta.
 
 **-v**
 

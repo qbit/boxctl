@@ -103,6 +103,11 @@ The options are as follows:
 > pkg\_info(1)
 > for more information on fuzzy names.
 
+*$CWD/commands*
+
+> An optional file that contains a script that will be executed at the end of
+> the run.
+
 # SEE ALSO
 
 chmod(1),

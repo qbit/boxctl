@@ -210,3 +210,11 @@ if [ $MAINTENANCE == 1 ]; then
 	msg 0 "installing firmware updates"
 	_ssh ${RUN_USER}@${SERVER} "/usr/sbin/fw_update $V -a"
 fi
+
+if [ -f ./commands ]; then
+	local _tmp=$(mktemp)
+	rm $_tmp
+	msg 0 "executing 'commands' file"
+	_scp commands "${RUN_USER}@${SERVER}:${_tmp}"
+	_ssh ${RUN_USER}@${SERVER} "chmod +x ${_tmp}; . ${_tmp}"
+fi

@@ -187,6 +187,40 @@ EOF
 	done
 fi
 
+if [ -f ./groups ]; then
+	msg 0 "adding $(wc -l groups | awk '{print $1 " " $2}')"
+	for group in $(cat groups); do
+		local _group _gid
+		read _group _gid <<EOF
+			$(echo $group | sed 's/:/ /g')
+EOF
+		msg 1 "\t${_group} (${_gid})"
+		_ssh ${RUN_USER}@${SERVER} "grep -q ^${_group} /etc/group || \
+			/usr/sbin/groupadd -g ${_gid} ${_group}"
+	done
+fi
+
+if [ -f ./users ]; then
+	msg 0 "adding $(wc -l users | awk '{print $1 " " $2}')"
+	for user in $(cat users); do
+		local _u _uid _gid _c _home _shell _pass
+		read _u _uid _gid _c _home _shell _pass <<EOF
+			$(echo $user | sed 's/:/ /g')
+EOF
+		msg 1 "\t${_u} (${_c})"
+		_ssh ${RUN_USER}@${SERVER} "grep -q ^${_u} /etc/passwd || \
+			/usr/sbin/useradd \
+				-s ${_shell} \
+				-c '${_c}' \
+				-d '${_home}' \
+				-m \
+				-g ${_gid} \
+				-u ${_uid} \
+				-p ${_pass} \
+				${_u}"
+	done
+fi
+
 if [ -f ./services ]; then
 	msg 0 "enabling services $(wc -l services | awk '{print $1 " " $2}')"
 	for service in $(cat services); do

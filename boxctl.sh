@@ -167,26 +167,6 @@ _ssh() {
 
 V=$(expand_v)
 
-if [ -f ./files ]; then
-	msg 0 "installing $(wc -l files | awk '{print $1 " " $2}')"
-	for file in $(cat files); do
-		local _src _dest _mode _owner _group _dir
-		read _src _owner _group _mode _dest <<EOF
-			$(echo $file | sed 's/:/ /g')
-EOF
-		_dir=$(dirname $_dest)
-		msg 1 "\t${_src} -> ${_dest}"
-		msg 2 "\t\tmkdir -p ${_dir}"
-		msg 2 "\t\tchown ${_owner}:${_group} $_dest"
-		msg 2 "\t\tchmod ${_mode} $_dest"
-
-		_ssh ${RUN_USER}@${SERVER} "mkdir -p ${_dir}"
-		_scp $_src "${RUN_USER}@${SERVER}:$_dest"
-		_ssh ${RUN_USER}@${SERVER} "/sbin/chown ${_owner}:${_group} \
-			$_dest; /bin/chmod ${_mode} $_dest"
-	done
-fi
-
 if [ -f ./groups ]; then
 	msg 0 "adding $(wc -l groups | awk '{print $1 " " $2}')"
 	for group in $(cat groups); do
@@ -220,6 +200,27 @@ EOF
 				${_u}"
 	done
 fi
+
+if [ -f ./files ]; then
+	msg 0 "installing $(wc -l files | awk '{print $1 " " $2}')"
+	for file in $(cat files); do
+		local _src _dest _mode _owner _group _dir
+		read _src _owner _group _mode _dest <<EOF
+			$(echo $file | sed 's/:/ /g')
+EOF
+		_dir=$(dirname $_dest)
+		msg 1 "\t${_src} -> ${_dest}"
+		msg 2 "\t\tmkdir -p ${_dir}"
+		msg 2 "\t\tchown ${_owner}:${_group} $_dest"
+		msg 2 "\t\tchmod ${_mode} $_dest"
+
+		_ssh ${RUN_USER}@${SERVER} "mkdir -p ${_dir}"
+		_scp $_src "${RUN_USER}@${SERVER}:$_dest"
+		_ssh ${RUN_USER}@${SERVER} "/sbin/chown ${_owner}:${_group} \
+			$_dest; /bin/chmod ${_mode} $_dest"
+	done
+fi
+
 
 if [ -f ./services ]; then
 	msg 0 "enabling services $(wc -l services | awk '{print $1 " " $2}')"

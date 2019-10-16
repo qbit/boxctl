@@ -42,7 +42,7 @@ The options are as follows:
 **-f**
 
 > Force installation of all packages.
-> This skipps the 'intelligent' diff mode.
+> This skips the 'intelligent' diff mode.
 
 **-m**
 
@@ -96,7 +96,7 @@ The options are as follows:
 
 *$CWD/users*
 
-> A ":" delimited list of users to be added to thhe remote host.
+> A ":" delimited list of users to be added to the remote host.
 > Entries should follow the pattern: "user:uid:gid:comment:home:shell:password".
 > The "comment" filed should not contain white space for the time being.
 > "password" is expected to be an encrypted string produced via

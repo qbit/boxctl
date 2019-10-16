@@ -85,6 +85,15 @@ An optional file that contains a list of services to enable on the remote
 host.
 If a service is already enabled, it will be restarted each run of
 .Nm .
+.It Pa $CWD/groups
+A ":" delimited list of groups to be added to the remote host.
+Entries should follow a "group:gid" pattern.
+.It Pa $CWD/users
+A ":" delimited list of users to be added to thhe remote host.
+Entries should follow the pattern: "user:uid:gid:comment:home:shell:password".
+The "comment" filed should not contain white space for the time being.
+"password" is expected to be an encrypted string produced via
+.Xr encrypt 1 .
 .It Pa $CWD/packages
 When this file exists,
 .Nm
@@ -104,6 +113,7 @@ the run.
 .Sh SEE ALSO
 .Xr chmod 1 ,
 .Xr diff 1 ,
+.Xr encrypt 1 ,
 .Xr fw_update 1 ,
 .Xr ksh 1 ,
 .Xr pkg_add 1 ,

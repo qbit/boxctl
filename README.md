@@ -89,6 +89,19 @@ The options are as follows:
 > If a service is already enabled, it will be restarted each run of
 > **boxctl**.
 
+*$CWD/groups*
+
+> A ":" delimited list of groups to be added to the remote host.
+> Entries should follow a "group:gid" pattern.
+
+*$CWD/users*
+
+> A ":" delimited list of users to be added to thhe remote host.
+> Entries should follow the pattern: "user:uid:gid:comment:home:shell:password".
+> The "comment" filed should not contain white space for the time being.
+> "password" is expected to be an encrypted string produced via
+> encrypt(1).
+
 *$CWD/packages*
 
 > When this file exists,
@@ -112,6 +125,7 @@ The options are as follows:
 
 chmod(1),
 diff(1),
+encrypt(1),
 fw\_update(1),
 ksh(1),
 pkg\_add(1),

@@ -27,6 +27,7 @@ SNAPSHOT=""
 FORCE=0
 SSH_CTL_PATH="/tmp/boxctl-%r@%h:%p"
 SSH_OPTS="-o ControlMaster=auto -o ControlPersist=60s -o ControlPath=${SSH_CTL_PATH}"
+RSYNC_OPTS="--rsync-path=/usr/bin/openrsync -Dlrt"
 
 while getopts "fh:mnu:sv" arg; do
 	case $arg in
@@ -98,6 +99,27 @@ expand_v() {
 	fi
 }
 
+rsync_verbose() {
+	local _opt=""
+	if [ $VERBOSITY -ge 2 ]; then
+		_opt="$V"
+	fi
+
+	if [ $DRY == 1 ]; then
+		echo openrsync ${RSYNC_OPTS} $_opt "$1" "$2"
+	else
+		openrsync ${RSYNC_OPTS} $_opt "$1" "$2"
+	fi
+}
+
+rsync_quiet() {
+	if [ $DRY == 1 ]; then
+		echo openrsync ${RSYNC_OPTS} "$1" "$2"
+	else
+		openrsync ${RSYNC_OPTS} "$1" "$2" >/dev/null
+	fi
+}
+
 ssh_verbose() {
 	local _opt=""
 	if [ $VERBOSITY -ge 4 ]; then
@@ -140,6 +162,18 @@ scp_quiet() {
 	fi
 }
 
+
+_rsync() {
+	local _src _dest
+	_src=$1
+	_dest="$(dirname $2)"
+
+	if [ $VERBOSITY -gt 2 ]; then
+		rsync_verbose "$_src" "$_dest"
+	else
+		rsync_quiet "$_src" "$_dest"
+	fi
+}
 
 _scp() {
 	local _src _dest
@@ -215,7 +249,7 @@ EOF
 		msg 2 "\t\tchmod ${_mode} $_dest"
 
 		_ssh ${RUN_USER}@${SERVER} "mkdir -p ${_dir}"
-		_scp $_src "${RUN_USER}@${SERVER}:$_dest"
+		_rsync $_src "${RUN_USER}@${SERVER}:$_dest"
 		_ssh ${RUN_USER}@${SERVER} "/sbin/chown ${_owner}:${_group} \
 			$_dest; /bin/chmod ${_mode} $_dest"
 	done

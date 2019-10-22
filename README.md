@@ -41,8 +41,8 @@ The options are as follows:
 
 **-f**
 
-> Force installation of all packages.
-> This skips the 'intelligent' diff mode.
+> Force installation of all packages and restarting of all services
+> This skips the 'intelligent' diff and service restart mode.
 
 **-m**
 

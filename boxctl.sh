@@ -73,7 +73,7 @@ SERVICE_START_RESTART=$(cat <<EOF
 if /usr/sbin/rcctl check %s; then
 	AGE=\$(stat -s %s | awk -v now=\$(date +%%s) \
 		'{split(\$10,a,"="); print now - a[2]}')
-	if [ \$AGE -lt 100 ]; then
+	if [ \$AGE -lt 100 ] || [ "${FORCE}" == "1" ]; then
 		logger -t boxctl "restarting %s (\$AGE seconds old)"
 		/usr/sbin/rcctl restart %s
 	else

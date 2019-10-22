@@ -55,8 +55,10 @@ This skips the 'intelligent' diff and service restart mode.
 Run maintenance tasks.
 This includes deleting unused dependencies using
 .Xr pkg_delete 1 .
-And installing / updating firmware using
-.Xr fw_update 1 .
+And installing / updating packages and firmware using
+.Xr fw_update 1
+and
+.Xr pkg_add 1 .
 .It Fl n
 Dry run.
 This will only print the commands that will be run.

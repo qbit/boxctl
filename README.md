@@ -49,8 +49,10 @@ The options are as follows:
 > Run maintenance tasks.
 > This includes deleting unused dependencies using
 > pkg\_delete(1).
-> And installing / updating firmware using
-> fw\_update(1).
+> And installing / updating packages and firmware using
+> fw\_update(1)
+> and
+> pkg\_add(1).
 
 **-n**
 

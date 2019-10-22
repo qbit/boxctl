@@ -289,6 +289,8 @@ fi
 if [ $MAINTENANCE == 1 ]; then
 	msg 0 "cleaning up unused packages"
 	_ssh ${RUN_USER}@${SERVER} "/usr/sbin/pkg_delete $V -a"
+	msg 0 "updating installed packages"
+	_ssh ${RUN_USER}@${SERVER} "/usr/sbin/pkg_add $V -u"
 	msg 0 "installing firmware updates"
 	_ssh ${RUN_USER}@${SERVER} "/usr/sbin/fw_update $V -a"
 fi

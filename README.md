@@ -86,8 +86,14 @@ The options are as follows:
 
 > An optional file that contains a list of services to enable on the remote
 > host.
-> If a service is already enabled, it will be restarted each run of
-> **boxctl**.
+> Each line in the file should contain "name:path".
+> Where "name" is the name of a service (httpd for example) and "path" is the
+> full path to a file that when modified, should trigger a restart of the named
+> service.
+> For example, the entry "httpd:/etc/httpd.conf" would restart
+> httpd(8)
+> if the mtime on "/etc/httpd.conf" is less than 100 seconds from the current
+> time.
 
 *$CWD/groups*
 

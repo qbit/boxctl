@@ -69,10 +69,19 @@ EOF
 )
 
 SERVICE_START_RESTART=$(cat <<EOF
-/usr/sbin/rcctl enable %s; \
-/usr/sbin/rcctl check %s && \
-	/usr/sbin/rcctl restart %s || \
+/usr/sbin/rcctl enable %s;
+if /usr/sbin/rcctl check %s; then
+	AGE=\$(stat -s %s | awk -v now=\$(date +%%s) \
+		'{split(\$10,a,"="); print now - a[2]}')
+	if [ \$AGE -lt 100 ]; then
+		logger -t boxctl "restarting %s (\$AGE seconds old)"
+		/usr/sbin/rcctl restart %s
+	else
+		logger -t boxctl "not restarting %s (\$AGE seconds old)"
+	fi
+else
 	/usr/sbin/rcctl start %s
+fi
 EOF
 )
 
@@ -258,10 +267,14 @@ fi
 
 if [ -f ./services ]; then
 	msg 0 "enabling services $(wc -l services | awk '{print $1 " " $2}')"
+	local _svc _chfile
 	for service in $(cat services); do
-		msg 1 "\tenabling/restarting ${service}"
+		read _svc _chfile <<EOF
+			$(echo $service | sed 's/:/ /g')
+EOF
+		msg 1 "\tenabling/restarting ${_svc}"
 		cmd="$(printf "$SERVICE_START_RESTART" \
-			$service $service $service $service)"
+			$_svc $_svc $_chfile $_svc $_svc $_svc $_svc)"
 		_ssh ${RUN_USER}@${SERVER} "${cmd}"
 	done
 fi

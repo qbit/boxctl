@@ -83,8 +83,14 @@ If this file does not exist, no files are copied.
 .It Pa $CWD/services
 An optional file that contains a list of services to enable on the remote
 host.
-If a service is already enabled, it will be restarted each run of
-.Nm .
+Each line in the file should contain "name:path".
+Where "name" is the name of a service (httpd for example) and "path" is the
+full path to a file that when modified, should trigger a restart of the named
+service.
+For example, the entry "httpd:/etc/httpd.conf" would restart
+.Xr httpd 8
+if the mtime on "/etc/httpd.conf" is less than 100 seconds from the current
+time.
 .It Pa $CWD/groups
 A ":" delimited list of groups to be added to the remote host.
 Entries should follow a "group:gid" pattern.

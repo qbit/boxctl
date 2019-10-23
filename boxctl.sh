@@ -210,6 +210,13 @@ _ssh() {
 
 V=$(expand_v)
 
+if [ -f ./packages ]; then
+	msg 0 "installing $(wc -l packages | awk '{print $1 " " $2}')"
+	cmd=$(printf "${PKG_DIFF_INSTALL}" $V $V)
+	_scp packages "${RUN_USER}@${SERVER}:/etc/packages.tmp"
+	_ssh ${RUN_USER}@${SERVER} "${cmd}"
+fi
+
 if [ -f ./groups ]; then
 	msg 0 "adding $(wc -l groups | awk '{print $1 " " $2}')"
 	for group in $(cat groups); do
@@ -277,13 +284,6 @@ EOF
 			$_svc $_svc $_chfile $_svc $_svc $_svc $_svc)"
 		_ssh ${RUN_USER}@${SERVER} "${cmd}"
 	done
-fi
-
-if [ -f ./packages ]; then
-	msg 0 "installing $(wc -l packages | awk '{print $1 " " $2}')"
-	cmd=$(printf "${PKG_DIFF_INSTALL}" $V $V)
-	_scp packages "${RUN_USER}@${SERVER}:/etc/packages.tmp"
-	_ssh ${RUN_USER}@${SERVER} "${cmd}"
 fi
 
 if [ $MAINTENANCE == 1 ]; then

@@ -210,16 +210,22 @@ _ssh() {
 
 V=$(expand_v)
 
+fnc() {
+	local _count
+	_count=$(grep -v ^# $1 | wc -l | awk '{print $1}')
+	echo "${1} ${_count}"
+}
+
 if [ -f ./packages ]; then
-	msg 0 "installing $(wc -l packages | awk '{print $1 " " $2}')"
+	msg 0 "installing $(fnc packages)"
 	cmd=$(printf "${PKG_DIFF_INSTALL}" $V $V)
 	_scp packages "${RUN_USER}@${SERVER}:/etc/packages.tmp"
 	_ssh ${RUN_USER}@${SERVER} "${cmd}"
 fi
 
 if [ -f ./groups ]; then
-	msg 0 "adding $(wc -l groups | awk '{print $1 " " $2}')"
-	for group in $(cat groups); do
+	msg 0 "adding $(fnc groups)"
+	for group in $(cat groups | grep -v ^#); do
 		local _group _gid
 		read _group _gid <<EOF
 			$(echo $group | sed 's/:/ /g')
@@ -231,8 +237,8 @@ EOF
 fi
 
 if [ -f ./users ]; then
-	msg 0 "adding $(wc -l users | awk '{print $1 " " $2}')"
-	for user in $(cat users); do
+	msg 0 "adding $(fnc users)"
+	for user in $(cat users | grep -v ^#); do
 		local _u _uid _gid _c _home _shell _pass
 		read _u _uid _gid _c _home _shell _pass <<EOF
 			$(echo $user | sed 's/:/ /g')
@@ -252,8 +258,8 @@ EOF
 fi
 
 if [ -f ./files ]; then
-	msg 0 "installing $(wc -l files | awk '{print $1 " " $2}')"
-	for file in $(cat files); do
+	msg 0 "installing $(fnc files)"
+	for file in $(cat files | grep -v ^#); do
 		local _src _dest _mode _owner _group _dir
 		read _src _owner _group _mode _dest <<EOF
 			$(echo $file | sed 's/:/ /g')
@@ -272,9 +278,9 @@ EOF
 fi
 
 if [ -f ./services ]; then
-	msg 0 "enabling services $(wc -l services | awk '{print $1 " " $2}')"
+	msg 0 "enabling services $(fnc services)"
 	local _svc _chfile
-	for service in $(cat services); do
+	for service in $(cat services | grep -v ^#); do
 		read _svc _chfile <<EOF
 			$(echo $service | sed 's/:/ /g')
 EOF

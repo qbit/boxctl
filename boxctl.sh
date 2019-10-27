@@ -271,7 +271,6 @@ EOF
 	done
 fi
 
-
 if [ -f ./services ]; then
 	msg 0 "enabling services $(wc -l services | awk '{print $1 " " $2}')"
 	local _svc _chfile

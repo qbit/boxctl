@@ -1,0 +1,84 @@
+diff --git a/boxctl.sh b/boxctl.sh
+index da15b17..5037112 100755
+--- a/boxctl.sh
++++ b/boxctl.sh
+@@ -208,6 +208,35 @@ _ssh() {
+ 	fi
+ }
+ 
++if_optval() {
++	local _a=$1 _b=$2 _c
++
++	if [ ! -z $3 ]; then
++		_c=$3
++	else
++		_c=""
++	fi
++
++	_a=${_a%%\"}
++	_a=${_a##\"}
++
++	_b=${_b%%\"}
++	_b=${_b##\"}
++
++	_c=${_c%%\"}
++	_c=${_c##\"}
++
++	if [ "${_b}" != "" ]; then
++		echo "${_a} ${_b}"
++	else
++		if [ "$_c" != "" ]; then
++			echo "${_a} ${_c}"
++		else
++			echo ""
++		fi
++	fi
++}
++
+ V=$(expand_v)
+ 
+ fnc() {
+@@ -239,20 +268,34 @@ fi
+ if [ -f ./users ]; then
+ 	msg 0 "adding $(fnc users)"
+ 	for user in $(cat users | grep -v ^#); do
+-		local _u _uid _gid _c _home _shell _pass
+-		read _u _uid _gid _c _home _shell _pass <<EOF
+-			$(echo $user | sed 's/:/ /g')
++		local _u _uid _gid _groups _c _home _shell _pass
++		read _u _uid _gid _groups _c _home _shell _pass <<EOF
++			$(echo "${user}" | awk -F: \
++			'{for(i = 1; i <= NF; i++) { printf "\"%s\" ", $i; }}')
+ EOF
+ 		msg 1 "\t${_u} (${_c})"
+ 		_ssh ${RUN_USER}@${SERVER} "grep -q ^${_u} /etc/passwd || \
+ 			/usr/sbin/useradd \
+-				-s ${_shell} \
+-				-c '${_c}' \
+-				-d '${_home}' \
++				$V \
++				-m \
++				$(if_optval "-s" "${_shell}" "/bin/ksh") \
++				$(if_optval "-c" "${_c}" "") \
++				$(if_optval "-d" "${_home}" "") \
++				$(if_optval "-g" "${_gid}" "") \
++				$(if_optval "-G" "${_groups}" "") \
++				$(if_optval "-u" "${_uid}" "") \
++				$(if_optval "-p" "${_pass}" "") \
++				${_u} && \
++			/usr/sbin/usermod \
++				$V \
+ 				-m \
+-				-g ${_gid} \
+-				-u ${_uid} \
+-				-p ${_pass} \
++				$(if_optval "-s" "${_shell}" "/bin/ksh") \
++				$(if_optval "-c" "${_c}" "") \
++				$(if_optval "-d" "${_home}" "") \
++				$(if_optval "-g" "${_gid}" "") \
++				$(if_optval "-G" "${_groups}" "") \
++				$(if_optval "-u" "${_uid}" "") \
++				$(if_optval "-p" "${_pass}" "") \
+ 				${_u}"
+ 	done
+ fi

@@ -25,12 +25,16 @@ DRY=0
 MAINTENANCE=0
 SNAPSHOT=""
 FORCE=0
+COPY=0
 SSH_CTL_PATH="/tmp/boxctl-%r@%h:%p"
 SSH_OPTS="-o ControlMaster=auto -o ControlPersist=60s -o ControlPath=${SSH_CTL_PATH}"
 RSYNC_OPTS="--rsync-path=/usr/bin/openrsync -Dlrt"
 
-while getopts "fh:mnu:sv" arg; do
+while getopts "cfh:mnu:sv" arg; do
 	case $arg in
+		c)
+			COPY=1
+			;;
 		f)
 			FORCE=1
 			;;
@@ -215,6 +219,23 @@ fnc() {
 	_count=$(grep -v ^# $1 | wc -l | awk '{print $1}')
 	echo "${1} ${_count}"
 }
+
+
+if [ "${COPY}" == "1" ]; then
+	if [ -f ./files ]; then
+		msg 0 "syncing $(fnc files) from ${SERVER}"
+		for file in $(cat files | grep -v ^#); do
+			local _src _dest _mode _owner _group _dir
+			read _src _owner _group _mode _dest <<EOF
+				$(echo $file | sed 's/:/ /g')
+EOF
+			_dir=$(dirname $_dest)
+			msg 1 "\t${_dest} -> ${_src}"
+			_rsync "${RUN_USER}@${SERVER}:$_dest" $_src
+		done
+	fi
+	exit 0
+fi
 
 if [ -f ./packages ]; then
 	msg 0 "installing $(fnc packages)"

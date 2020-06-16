@@ -9,7 +9,7 @@ machines
 # SYNOPSIS
 
 **boxctl**
-\[**-fmnsv**]
+\[**-cfmnsv**]
 \[**-h**&nbsp;*host*]
 \[**-u**&nbsp;*user*]
 
@@ -26,6 +26,10 @@ OpenBSD
 base.
 
 The options are as follows:
+
+**-c**
+
+> Copy managed files from server into local directory.
 
 **-h** *host*
 
@@ -157,4 +161,4 @@ was released in September of 2019.
 was written by
 Aaron Bieber &lt;[aaron@bolddaemon.com](mailto:aaron@bolddaemon.com)&gt;.
 
-OpenBSD 6.6 - September 23, 2019
+OpenBSD 6.7 - September 23, 2019

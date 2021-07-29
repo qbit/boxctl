@@ -326,5 +326,5 @@ if [ -f ./commands ]; then
 	rm $_tmp
 	msg 0 "executing 'commands' file"
 	_scp commands "${RUN_USER}@${SERVER}:${_tmp}"
-	_ssh ${RUN_USER}@${SERVER} "chmod +x ${_tmp}; . ${_tmp}; rm ${_tmp}"
+	_ssh ${RUN_USER}@${SERVER} "chmod +x ${_tmp}; ./${_tmp}; rm ${_tmp}"
 fi
